@@ -5,16 +5,16 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  status: {}
   check_run:
     types: [ completed ]
 
 jobs:
   handle-failure:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'status' && (github.event.state == 'error' || github.event.state == 'failure') }}
+    if: ${{ github.event_name == 'check_run' && github.event.check_run.conclusion == 'failure' }}
     steps:
-      - run:  ${{ github.event.description }}
+      - run: echo "Check run failed - ${{ github.event.check_run.output.title }}"
+  
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -49,7 +49,7 @@ jobs:
         run: npm run test:coverage
 
   build:
-    needs: [lint, test]  # handle-failure is optional; don't block on it
+    needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -62,5 +62,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npm run build 
-  
+        run: npm run build
