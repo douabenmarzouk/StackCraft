@@ -78,7 +78,7 @@ jobs:
       - name: Build Frontend
         working-directory: ./frontend
         run: |
-          npm install
+          npm ci
           npm run build
       
       - name: Build Backend
