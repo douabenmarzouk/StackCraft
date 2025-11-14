@@ -49,7 +49,7 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci
-          npm run test || echo "Frontend tests OK"
+          npm run test || echo "tests OK"
 
   test-backend:
     runs-on: ubuntu-latest
