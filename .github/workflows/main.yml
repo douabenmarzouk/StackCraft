@@ -89,8 +89,8 @@ jobs:
   publish_image:
     runs-on:  ubuntu-latest
     steps:
-      - name: checkout 
-        uses: action/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
      # 2️⃣ Login Docker Hub avec token
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u doua82400 --password-stdin
