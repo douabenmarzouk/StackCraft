@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+ 
 
 jobs:
   lint-frontend:
@@ -85,3 +86,25 @@ jobs:
         run: |
           npm install
           npm run build || echo "Backend build complete"
+  publish_image:
+    runs-on:  ubuntu-latest
+    steps:
+      - name: checkout 
+        uses: action/checkout@v4
+     # 2️⃣ Login Docker Hub avec token
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u doua82400 --password-stdin
+
+      # 3️⃣ Build toutes les images du docker-compose.yml
+      - name: Build images
+        run: docker compose -f docker-compose.yml build
+
+      # 4️⃣ Push frontend
+      - name: Push frontend image
+        run: docker push doua82400/job-app-frontend:latest
+
+      # 5️⃣ Push backend
+      - name: Push backend image
+        run: docker push doua82400/job-app-backend:latest
+
+

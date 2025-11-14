@@ -16,7 +16,7 @@ console.log("🔍 DEBUG: Type de authroutes:", typeof authroutes);
 
 // Middleware pour parser le JSON
 app.use(cors({
-  origin: 'http://localhost:5173', // URL de votre frontend Vite
+  origin: ['http://localhost:3000', 'http://localhost:5173'], // Les deux ports
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

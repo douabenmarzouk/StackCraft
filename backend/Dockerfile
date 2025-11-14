@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installe en cache (rapide si pas changé)
-RUN npm install
+RUN npm ci --only=production
 
 # Copie le reste
 COPY . .
