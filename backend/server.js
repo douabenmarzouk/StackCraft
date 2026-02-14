@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 console.log("🔍 DEBUG: process.env.PORT =", process.env.PORT);
 console.log("🔍 DEBUG: PORT utilisé =", PORT);
 console.log("🔍 DEBUG: Type de authroutes:", typeof authroutes);
+console.log("deploy test")
 
 // Middleware pour parser le JSON
 app.use(cors({
