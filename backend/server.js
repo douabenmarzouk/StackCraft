@@ -12,11 +12,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// 🔥 DEBUG - Affiche les valeurs
+console.log("🔍 DEBUG: process.env.PORT =", process.env.PORT);
+console.log("🔍 DEBUG: PORT utilisé =", PORT);
 console.log("🔍 DEBUG: Type de authroutes:", typeof authroutes);
 
 // Middleware pour parser le JSON
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'], // Les deux ports
+  origin: ['http://localhost:3000', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -24,17 +27,20 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Routes
 console.log("🔍 DEBUG: Enregistrement des routes /api/auth");
 app.use("/api/auth", authroutes);
 app.use("/api/project", projectroutes);
-app.use("/api/ai",airoutes);
+app.use("/api/ai", airoutes);
+
 // Route de test
 app.get("/", (req, res) => {
   res.send("API fonctionne !");
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
 
 // Connexion à la base de données et seeding
 connectDB()
@@ -51,11 +57,9 @@ connectDB()
 // Démarrage du serveur
 app.listen(PORT, () => {
   console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`\n📍 Testez dans Postman :`);
+  console.log(`\n📍 Routes disponibles :`);
   console.log(`   GET http://localhost:${PORT}/`);
-  console.log(`   GET http://localhost:${PORT}/api/test-direct`);
+  console.log(`   GET http://localhost:${PORT}/health`);
+  console.log(`   PUT http://localhost:${PORT}/api/project/technologie`);
   console.log(`\n`);
-});
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK' });
 });

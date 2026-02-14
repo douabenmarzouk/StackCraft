@@ -29,7 +29,7 @@ function Register() {
     setDebugInfo("");
     setLoading(true);
 
-    const API_URL = 'http://localhost:5001';
+    const API_URL = 'http://localhost:5002';
     const endpoint = `${API_URL}/api/auth/signup`;
 
     console.log('=== DÉBUT INSCRIPTION ===');

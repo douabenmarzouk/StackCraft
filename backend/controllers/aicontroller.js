@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { UserTechStack } from "../models/project.js";
 
 dotenv.config();
+
 export async function generateProjectByUser(req, res) {
   try {
     const { userId } = req.body;
@@ -12,14 +13,13 @@ export async function generateProjectByUser(req, res) {
     if (!userTech) return res.status(404).json({ error: "User not found" });
 
     const job = userTech.job;
-    const techsList = Object.values(userTech.selectedTechnologies) // toutes les valeurs des catégories
-  .flat()   // aplatit tous les sous-tableaux
-  .filter(t => t); // enlève les tableaux vides
-
+    const techsList = Object.values(userTech.selectedTechnologies)
+      .flat()
+      .filter(t => t);
 
     const prompt = `Tu es un expert en ${job}.
-    Voici les technologies : ${techsList.join(", ")}.
-    Suggère 3 projets réalistes.
+Voici les technologies : ${techsList.join(", ")}.
+Suggère 3 projets réalistes.
 
 Réponds avec un objet JSON :
 {
@@ -32,6 +32,7 @@ Réponds avec un objet JSON :
   ]
 }`;
 
+    // Appel Mistral AI
     const response = await axios.post(
       "https://api.mistral.ai/v1/chat/completions",
       {
@@ -48,16 +49,25 @@ Réponds avec un objet JSON :
         }
       }
     );
-   //avoire resulta de ai 
-    const result = JSON.parse(response.data.choices[0].message.content);
-    
-    res.status(200).json({ 
-      success: true, 
-      ideas: result.projets 
-    });
+
+    // Vérifie si le contenu existe
+    const content = response.data?.choices?.[0]?.message?.content;
+    if (!content) {
+      return res.status(500).json({ error: "Aucun contenu renvoyé par Mistral AI" });
+    }
+
+    let result;
+    try {
+      result = JSON.parse(content);
+    } catch (parseError) {
+      return res.status(500).json({ error: "Impossible de parser le JSON de Mistral AI", raw: content });
+    }
+
+    res.status(200).json({ success: true, ideas: result.projets || [] });
 
   } catch (error) {
     console.error("Erreur Mistral AI:", error.response?.data || error.message);
+    // Toujours renvoyer du JSON même si Mistral AI échoue
     res.status(500).json({
       error: "Erreur Mistral AI",
       details: error.response?.data || error.message

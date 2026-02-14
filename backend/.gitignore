@@ -1,3 +1,6 @@
 node_modules/
 .env
 npm-debug.log
+# Kubernetes et Argo
+k8s/
+argo-setup/Application.yaml

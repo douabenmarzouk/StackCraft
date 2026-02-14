@@ -1,6 +1,5 @@
 # backend/Dockerfile → VERSION ULTRA-RAPIDE
 FROM node:18-alpine
-
 WORKDIR /app
 
 # Copie uniquement package.json

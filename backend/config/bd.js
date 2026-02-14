@@ -5,11 +5,15 @@ export const connectDB = async () => {
     if (!process.env.MONGO_URL) { 
       throw new Error("Mongo URL is not defined in .env");
     }
-    await mongoose.connect(process.env.MONGO_URL);
+
+    await mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
     console.log("MongoDB connecté avec succès !");
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Cannot connect to MongoDB:", error.message);
-    process.exit(1);
+    process.exit(1); // arrête le serveur si DB inaccessible
   }
 };

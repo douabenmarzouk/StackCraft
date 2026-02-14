@@ -30,7 +30,7 @@ const Dashbord = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:5001/api/auth/profile/${userId}`, {
+      const response = await fetch(`http://localhost:5002/api/auth/profile/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ const Dashbord = () => {
       console.log('💾 Sauvegarde des technologies...');
       console.log('📦 Technologies sélectionnées:', selectedTechnologies);
 
-      const response = await fetch('http://localhost:5001/api/project/update-tech-stack', {
+      const response = await fetch('http://localhost:5002/api/project/technologie', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -113,7 +113,7 @@ const Dashbord = () => {
 
       console.log('🤖 Génération de projets...');
 
-      const response = await fetch('http://localhost:5001/api/ai/generate-projects', {
+      const response = await fetch('http://localhost:5002/api/ai/generate-projects', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
