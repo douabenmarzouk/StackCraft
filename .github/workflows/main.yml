@@ -2,9 +2,9 @@ name: Node.js CI + GitOps Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   # 1️⃣ Lint Frontend
