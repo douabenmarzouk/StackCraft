@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 5000;
 
 // 🔥 DEBUG - Affiche les valeurs
 console.log("🔍 DEBUG: process.env.PORT =", process.env.PORT);
-console.log("🔍 DEBUG: PORT utilisé =", PORT);
 console.log("🔍 DEBUG: Type de authroutes:", typeof authroutes);
 console.log("deploy test")
 
