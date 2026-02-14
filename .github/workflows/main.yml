@@ -97,8 +97,9 @@ jobs:
           cd gitops
 
           # Update deployment manifests with latest image
-          sed -i "s|image: ${IMAGE_FRONTEND}:.*|image: ${IMAGE_FRONTEND}:latest|g" k8s/deployment-frontend.yaml
-          sed -i "s|image: ${IMAGE_BACKEND}:.*|image: ${IMAGE_BACKEND}:latest|g" k8s/deployement-backend.yaml
+          sed -i "s|.*image: ${IMAGE_FRONTEND}:.*|image: ${IMAGE_FRONTEND}:latest|g" k8s/deployment-frontend.yaml
+          sed -i "s|.*image: ${IMAGE_BACKEND}:.*|image: ${IMAGE_BACKEND}:latest|g" k8s/deployment-backend.yaml
+
 
           # Commit & push changes
           git config user.name "GitHub Actions"
