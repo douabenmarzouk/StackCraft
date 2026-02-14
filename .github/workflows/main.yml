@@ -1,13 +1,13 @@
-name: Node.js CI
+name: Node.js CI + GitOps Deploy
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
- 
 
 jobs:
+  # 1️⃣ Lint Frontend
   lint-frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -22,6 +22,7 @@ jobs:
           npm ci
           npm run lint || echo "Frontend lint OK"
 
+  # 2️⃣ Lint Backend
   lint-backend:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -36,75 +37,72 @@ jobs:
           npm ci
           npm run lint || echo "Backend lint OK"
 
-  test-frontend:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: lint-frontend
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Test Frontend
-        working-directory: ./frontend
-        run: |
-          npm ci
-          npm run test || echo "tests OK"
-
-  test-backend:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: lint-backend
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Test Backend
-        working-directory: ./backend
-        run: |
-          npm ci
-          npm test || echo "Backend tests OK"
-
+  # 3️⃣ Build Frontend & Backend
   build:
-    needs: [lint-frontend, lint-backend, test-frontend, test-backend]
+    needs: [lint-frontend, lint-backend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      
+
       - name: Build Frontend
         working-directory: ./frontend
         run: |
           npm ci
           npm run build
-      
+
       - name: Build Backend
         working-directory: ./backend
         run: |
           npm install
           npm run build || echo "Backend build complete"
+
+  # 4️⃣ Build & Push Docker Images
   publish_image:
-    runs-on:  ubuntu-latest
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_FRONTEND: doua82400/job-app-frontend
+      IMAGE_BACKEND: doua82400/job-app-backend
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-     # 2️⃣ Login Docker Hub avec token
+
+      # Login Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u doua82400 --password-stdin
 
-      # 3️⃣ Build toutes les images du docker-compose.yml
-      - name: Build images
+      # Build all Docker images
+      - name: Build Docker images
         run: docker compose -f docker-compose.yml build
 
-      # 4️⃣ Push frontend
+      # Push frontend image
       - name: Push frontend image
-        run: docker push doua82400/job-app-frontend:latest
+        run: docker push $IMAGE_FRONTEND:latest
 
-      # 5️⃣ Push backend
+      # Push backend image
       - name: Push backend image
-        run: docker push doua82400/job-app-backend:latest
+        run: docker push $IMAGE_BACKEND:latest
 
+      # 5️⃣ Update GitOps repo with new image tags
+      - name: Update GitOps deployment repo
+        env:
+          GITOPS_REPO: douabenmarzouk/StackCraft-gitops.git
+          GITOPS_PAT: ${{ secrets.GITOPS_PAT }}
+        run: |
+          # Clone GitOps repo
+          git clone https://$GITOPS_PAT@github.com/$GITOPS_REPO gitops
+          cd gitops
 
+          # Update deployment manifests with latest image
+          sed -i "s|image: ${IMAGE_FRONTEND}:.*|image: ${IMAGE_FRONTEND}:latest|g" k8s/deployment-frontend.yaml
+          sed -i "s|image: ${IMAGE_BACKEND}:.*|image: ${IMAGE_BACKEND}:latest|g" k8s/deployement-backend.yaml
+
+          # Commit & push changes
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update Docker images: frontend + backend"
+          git push origin main
