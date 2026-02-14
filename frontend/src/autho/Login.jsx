@@ -35,7 +35,7 @@ function Login() {
           localStorage.setItem("token", data.token);
           console.log('✅ Token sauvegardé:', data.token);
         } else {
-          console.warn('⚠️ Pas de token dans la réponse !');
+          console.warn('⚠️  token ');
         }
 
         if (data.user && data.user._id) {
