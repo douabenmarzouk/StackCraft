@@ -49,11 +49,12 @@ connectDB()
   });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`\n📍 Testez dans Postman :`);
-  console.log(`   GET http://localhost:${PORT}/`);
-  console.log(`   GET http://localhost:${PORT}/api/test-direct`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
+  console.log(`\n📍 Routes disponibles :`);
+  console.log(`   GET http://0.0.0.0:${PORT}/`);
+  console.log(`   GET http://0.0.0.0:${PORT}/health`);
+  console.log(`   PUT http://0.0.0.0:${PORT}/api/project/technologie`);
   console.log(`\n`);
 });
 app.get('/health', (req, res) => {
