@@ -19,11 +19,10 @@ console.log("deploy test")
 
 // Middleware pour parser le JSON
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: true,        // autorise dynamiquement l'origine
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
