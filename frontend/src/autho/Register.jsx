@@ -29,8 +29,9 @@ function Register() {
     setDebugInfo("");
     setLoading(true);
 
-    const API_URL = 'http://localhost:5002';
-    const endpoint = `${API_URL}/api/auth/signup`;
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+  const endpoint = `${API_URL}/auth/signup`;
+
 
     console.log('=== DÉBUT INSCRIPTION ===');
     console.log('1. URL:', endpoint);

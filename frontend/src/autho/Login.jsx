@@ -16,69 +16,48 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-    
-    try {
-      const response = await axios.post('http://localhost:5002/api/auth/login', formData);
-      const data = response.data;
-      
-      console.log('📦 Réponse login complète:', data);
-      
-      if (data.success) {
-        setSuccess("Connexion réussie ! Redirection...");
+  e.preventDefault();
+  setError("");
+  setSuccess("");
+  setLoading(true);
 
-        // ✅ SAUVEGARDER LE TOKEN ET USER ID (REQUIS POUR LE DASHBOARD)
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          console.log('✅ Token sauvegardé:', data.token);
-        } else {
-          console.warn('⚠️  token ');
-        }
+  try {
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const response = await axios.post(
+      `${API_URL}/auth/login`,
+      formData,
+      { withCredentials: true }
+    );
 
-        if (data.user && data.user._id) {
-          localStorage.setItem("userId", data.user._id);
-          console.log('✅ UserId sauvegardé:', data.user._id);
-        } else {
-          console.warn('⚠️ Pas de user._id dans la réponse !');
-        }
+    const data = response.data;
+    console.log("📦 Réponse login complète:", data);
 
-        // ✅ SAUVEGARDER LES DONNÉES UTILISATEUR (OPTIONNEL)
-        const userData = {
-          user: data.user,
-          selectedTechnologies: data.selectedTechnologies,
-          availableTechnologies: data.availableTechnologies,
-          expertise: data.expertise,
-          experience: data.experience,
-          isComplete: data.isComplete,
-        };
-        localStorage.setItem("userData", JSON.stringify(userData));
-        console.log('✅ UserData sauvegardé');
+    if (data.success) {
+      setSuccess("Connexion réussie ! Redirection...");
 
-        // Vérification finale
-        console.log('🔍 Vérification localStorage:');
-        console.log('  - Token:', localStorage.getItem('token') ? 'OK' : 'MANQUANT');
-        console.log('  - UserId:', localStorage.getItem('userId') ? 'OK' : 'MANQUANT');
-        console.log('  - UserData:', localStorage.getItem('userData') ? 'OK' : 'MANQUANT');
-
-        setFormData({ email: "", password: "" });
-        
-        // Redirection vers dashboard
-        setTimeout(() => {
-          navigate('/Dashbord');
-        }, 1500);
-      } else {
-        setError(data.message || "Erreur lors de la connexion");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
       }
-    } catch (err) {
-      console.error('❌ Erreur login:', err);
-      setError(err.response?.data?.message || "Impossible de se connecter au serveur");
-    } finally {
-      setLoading(false);
+
+      if (data.user?._id) {
+        localStorage.setItem("userId", data.user._id);
+      }
+
+      localStorage.setItem("userData", JSON.stringify(data));
+
+      setTimeout(() => navigate("/dashboard"), 1000);
+    } else {
+      setError(data.message || "Erreur de connexion");
     }
-  };
+  } catch (err) {
+    console.error("❌ Erreur login:", err);
+    setError("Impossible de se connecter au serveur");
+  } finally {
+    setLoading(false);
+  }
+};
+
+      
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 animate-gradient-x">

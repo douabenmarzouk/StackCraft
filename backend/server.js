@@ -54,11 +54,13 @@ connectDB()
   });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
   console.log(`\n📍 Routes disponibles :`);
-  console.log(`   GET http://localhost:${PORT}/`);
-  console.log(`   GET http://localhost:${PORT}/health`);
-  console.log(`   PUT http://localhost:${PORT}/api/project/technologie`);
+  console.log(`   GET http://0.0.0.0:${PORT}/`);
+  console.log(`   GET http://0.0.0.0:${PORT}/health`);
+  console.log(`   PUT http://0.0.0.0:${PORT}/api/project/technologie`);
   console.log(`\n`);
 });
+console.log("🔥 JWT_SECRET =", process.env.JWT_SECRET);
+
